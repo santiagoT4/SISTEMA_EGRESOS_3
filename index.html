@@ -371,8 +371,8 @@
                 t += `CUENTA DÉBITO  : ${datosCobro.trabajador} (${datosCobro.trabajadorCodigo || 'N/A'})\n`;
                 t += `CUENTA CRÉDITO : ${datosCobro.cliente} (${datosCobro.clienteID || 'N/A'})\n`;
             } else {
-                t += `CUENTA DÉBITO  : ${datosCobro.cliente} (${datosCobro.clienteID || 'N/A'})\n`;
-                t += `CUENTA CRÉDITO : ${datosCobro.trabajador} (${datosCobro.trabajadorCodigo || 'N/A'})\n`;
+                t += `CUENTA DÉBITO  : ${datosCobro.trabajador} (${datosCobro.trabajadorCodigo || 'N/A'})\n`;
+                t += `CUENTA CRÉDITO : ${datosCobro.cliente} (${datosCobro.clienteID || 'N/A'})\n\n`;
             }
             
             // Montos y saldos
@@ -399,19 +399,19 @@
             
             // ========== FIRMAS (UNA ENCIMA DE LA OTRA) ==========
             t += centerText('FIRMAS DE AUTORIZACIÓN', ancho) + '\n';
-            t += '_'.repeat(ancho) + '\n\n';
+            t += '_'.repeat(ancho) + '\n\n\n';
             
             // Firma 1 - Quien Recibe
            
-            t += centerText('______________________________________', ancho) + '\n';
-             t += centerText('FIRMA QUIEN RECIBE', ancho) + '\n';
+            t += centerText('________________________________________', ancho) + '\n';
+             t += centerText('FIRMA QUIEN RECIBE', ancho) + '\n\n';
             t += centerText('Nombre: ___________________', ancho) + '\n';
-            t += centerText('CC: ___________________', ancho) + '\n\n';
+            t += centerText('CC: ___________________', ancho) + '\n\n\n';
             
             // Firma 2 - Quien Entrega
             
-            t += centerText('______________________________________', ancho) + '\n';
-            t += centerText('FIRMA QUIEN ENTREGA', ancho) + '\n';
+            t += centerText('________________________________________', ancho) + '\n';
+            t += centerText('FIRMA QUIEN ENTREGA', ancho) + '\n\n';
             t += centerText('Nombre: ___________________', ancho) + '\n';
             t += centerText('CC: ___________________', ancho) + '\n\n';
             
