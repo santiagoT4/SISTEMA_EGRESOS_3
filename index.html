@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>SICSa - Impresión Ticket Cobro</title>
+    <title>SICSa - Constancia de Movimiento</title>
     <style>
         * {
             margin: 0;
@@ -342,7 +342,7 @@
         }
         
         // ============================================================
-        // GENERAR TICKET EN TEXTO PLANO PARA SISTEMA DE COBROS
+        // GENERAR TICKET EN TEXTO PLANO - VERSIÓN CONSTANCIA FORMAL
         // ============================================================
         function generarTicketTexto() {
             const ancho = 48;
@@ -350,69 +350,79 @@
             
             // ========== ENCABEZADO ==========
             t += '_'.repeat(ancho) + '\n';
-            t += centerText('SICSa - SISTEMA DE COBROS', ancho) + '\n';
-            t += centerText('Recibo de Pago', ancho) + '\n';
+            t += centerText('CONSTANCIA DE MOVIMIENTO FINANCIERO', ancho) + '\n';
+            t += centerText('SICSa - Sistema de Cobros', ancho) + '\n';
             t += '_'.repeat(ancho) + '\n';
             
-            // ========== TIPO DE OPERACIÓN ==========
-            const tipoLabel = datosCobro.tipoOperacion === 'EGRESO' ? '💸 EGRESO' : '📝 RECAUDO';
-            t += centerText(tipoLabel, ancho) + '\n';
-            t += '_'.repeat(ancho) + '\n';
-            
-            // ========== INFORMACIÓN PRINCIPAL ==========
-            t += `Factura     : ${datosCobro.factura}\n`;
-            t += `Cliente     : ${datosCobro.cliente}\n`;
-            if (datosCobro.numFacturaSIIGO) {
-                t += `SIIGO       : ${datosCobro.numFacturaSIIGO}\n`;
-            }
-            t += `Fecha Cobro : ${datosCobro.fechaCobro}\n`;
+            // ========== NÚMERO Y FECHA ==========
+            t += `CONSTANCIA # : ${datosCobro.id}\n`;
+            t += `FECHA        : ${datosCobro.fechaCobro}\n`;
             if (datosCobro.horaRegistro) {
-                t += `Hora        : ${datosCobro.horaRegistro}\n`;
+                t += `HORA         : ${datosCobro.horaRegistro}\n`;
             }
-            t += `Trabajador  : ${datosCobro.trabajador}`;
-            if (datosCobro.trabajadorCodigo) {
-                t += ` (${datosCobro.trabajadorCodigo})`;
-            }
-            t += '\n';
-            
-            // ========== CÓDIGOS ==========
-            if (datosCobro.cod1 || datosCobro.cod2) {
-                t += '_'.repeat(ancho) + '\n';
-                t += 'CÓDIGOS:\n';
-                if (datosCobro.cod1) t += `  COD_1: ${datosCobro.cod1}\n`;
-                if (datosCobro.cod2) t += `  COD_2: ${datosCobro.cod2}\n`;
-            }
-            
-            // ========== SALDOS ==========
             t += '_'.repeat(ancho) + '\n';
+            
+            // ========== DETALLE DEL MOVIMIENTO ==========
+            t += centerText('DETALLE DEL MOVIMIENTO', ancho) + '\n';
+            t += '_'.repeat(ancho) + '\n';
+            
+            // Cuentas
+            if (datosCobro.tipoOperacion === 'EGRESO') {
+                t += `CUENTA DÉBITO  : ${datosCobro.trabajador} (${datosCobro.trabajadorCodigo || 'N/A'})\n`;
+                t += `CUENTA CRÉDITO : ${datosCobro.cliente} (${datosCobro.clienteID || 'N/A'})\n`;
+            } else {
+                t += `CUENTA DÉBITO  : ${datosCobro.cliente} (${datosCobro.clienteID || 'N/A'})\n`;
+                t += `CUENTA CRÉDITO : ${datosCobro.trabajador} (${datosCobro.trabajadorCodigo || 'N/A'})\n`;
+            }
+            
+            // Montos y saldos
             const saldoAnt = parseFloat(datosCobro.saldoAnterior) || 0;
             const saldoNue = parseFloat(datosCobro.nuevoSaldo) || 0;
+            const monto = parseFloat(datosCobro.monto) || 0;
             
-            t += padRight('Saldo Anterior', 30) + padRight('$' + saldoAnt.toLocaleString(), 14) + '\n';
-            t += padRight('Monto Cobrado', 30) + padRight('- $' + montoNumerico.toLocaleString(), 14) + '\n';
-            t += '_'.repeat(ancho) + '\n';
-            t += padRight('NUEVO SALDO', 30) + padRight('$' + saldoNue.toLocaleString(), 14) + '\n';
-            t += '_'.repeat(ancho) + '\n';
+            t += `MONTO          : $${monto.toLocaleString()}\n`;
+            t += `SALDO ANTERIOR : $${saldoAnt.toLocaleString()}\n`;
+            t += `NUEVO SALDO    : $${saldoNue.toLocaleString()}\n`;
             
-            // ========== ESTADO ==========
-            const estadoLabel = datosCobro.estado === 'SALDADO' ? '✅ SALDADO' : '⏳ PENDIENTE';
-            t += centerText(`ESTADO: ${estadoLabel}`, ancho) + '\n';
+            // Estado
+            const estadoLabel = datosCobro.estado === 'SALDADO' ? 'SALDADO' : 'PENDIENTE';
+            t += `ESTADO         : ${estadoLabel}\n`;
+            t += '_'.repeat(ancho) + '\n';
             
             // ========== OBSERVACIONES ==========
             if (datosCobro.observaciones && datosCobro.observaciones.trim() !== '') {
-                t += '_'.repeat(ancho) + '\n';
                 t += centerText('OBSERVACIONES', ancho) + '\n';
                 const lineas = wrapText(datosCobro.observaciones, ancho - 4);
                 for (const linea of lineas) {
                     t += `  ${linea}\n`;
                 }
+                t += '_'.repeat(ancho) + '\n';
             }
             
-            // ========== PIE DE PÁGINA ==========
+            // ========== FIRMAS (UNA ENCIMA DE LA OTRA) ==========
+            t += centerText('FIRMAS DE AUTORIZACIÓN', ancho) + '\n';
+            t += '_'.repeat(ancho) + '\n\n';
+            
+            // Firma 1 - Quien Recibe
+            t += centerText('FIRMA QUIEN RECIBE', ancho) + '\n';
+            t += centerText('___________________', ancho) + '\n';
+            t += centerText('Nombre: ___________________', ancho) + '\n';
+            t += centerText('CC: ___________________', ancho) + '\n\n';
+            
+            // Firma 2 - Quien Entrega
+            t += centerText('FIRMA QUIEN ENTREGA', ancho) + '\n';
+            t += centerText('___________________', ancho) + '\n';
+            t += centerText('Nombre: ___________________', ancho) + '\n';
+            t += centerText('CC: ___________________', ancho) + '\n\n';
+            
             t += '_'.repeat(ancho) + '\n';
-            t += centerText('¡GRACIAS POR SU PAGO!', ancho) + '\n';
+            
+            // ========== PIE DE PÁGINA ==========
+            t += centerText('Este documento es una constancia física del', ancho) + '\n';
+            t += centerText('movimiento realizado. Sirve como soporte', ancho) + '\n';
+            t += '_'.repeat(ancho) + '\n';
             t += centerText('SICSa - Sistema de Cobros', ancho) + '\n';
-            t += centerText(`ID: ${datosCobro.id}`, ancho) + '\n';
+            t += centerText('www.sicsa.com', ancho) + '\n';
             t += '_'.repeat(ancho) + '\n';
             
             return t;
