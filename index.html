@@ -381,8 +381,6 @@
             const monto = parseFloat(datosCobro.monto) || 0;
             
             t += `MONTO          : $${monto.toLocaleString()}\n`;
-            t += `SALDO ANTERIOR : $${saldoAnt.toLocaleString()}\n`;
-            t += `NUEVO SALDO    : $${saldoNue.toLocaleString()}\n`;
             
             // Estado
             const estadoLabel = datosCobro.estado === 'SALDADO' ? 'SALDADO' : 'PENDIENTE';
@@ -405,13 +403,13 @@
             
             // Firma 1 - Quien Recibe
             t += centerText('FIRMA QUIEN RECIBE', ancho) + '\n';
-            t += centerText('___________________', ancho) + '\n';
+            t += centerText('_____________________________', ancho) + '\n';
             t += centerText('Nombre: ___________________', ancho) + '\n';
             t += centerText('CC: ___________________', ancho) + '\n\n';
             
             // Firma 2 - Quien Entrega
             t += centerText('FIRMA QUIEN ENTREGA', ancho) + '\n';
-            t += centerText('___________________', ancho) + '\n';
+            t += centerText('_____________________________', ancho) + '\n';
             t += centerText('Nombre: ___________________', ancho) + '\n';
             t += centerText('CC: ___________________', ancho) + '\n\n';
             
